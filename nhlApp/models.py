@@ -5,7 +5,7 @@ class Team(models.Model):
     abbrev = models.CharField(max_length=10)
     conference = models.CharField(max_length=20)
     division = models.CharField(max_length=20)
-    external_id = models.IntegerField() # TODO: сделать уникальным
+    external_id = models.IntegerField()  # TODO: сделать уникальным, когда появится реальный ID из API
 
     def __str__(self):
         return self.name
@@ -28,17 +28,20 @@ class PlayerSeasonStat(models.Model):
     goals = models.IntegerField()
     assists = models.IntegerField()
     points = models.IntegerField()
-    plus_minus = models.IntegerField()
-    shots = models.IntegerField()
+    plus_minus = models.IntegerField(null=True, blank=True)
+    shots = models.IntegerField(null=True, blank=True)
     shooting_pct = models.FloatField(null=True, blank=True)
-    pp_goals = models.IntegerField()
-    pp_points = models.IntegerField()
-    sh_goals = models.IntegerField()
-    sh_points = models.IntegerField()
-    ev_goals = models.IntegerField()
-    ev_points = models.IntegerField()
-    time_on_ice_per_game = models.FloatField()
+    pp_goals = models.IntegerField(null=True, blank=True)
+    pp_points = models.IntegerField(null=True, blank=True)
+    sh_goals = models.IntegerField(null=True, blank=True)
+    sh_points = models.IntegerField(null=True, blank=True)
+    ev_goals = models.IntegerField(null=True, blank=True)
+    ev_points = models.IntegerField(null=True, blank=True)
+    time_on_ice_per_game = models.FloatField(null=True, blank=True)
     faceoff_win_pct = models.FloatField(null=True, blank=True)
 
     class Meta:
         unique_together = ('player', 'season_id')
+
+    def __str__(self):
+        return f'{self.player.full_name} - {self.season_id}'
