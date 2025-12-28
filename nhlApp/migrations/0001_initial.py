@@ -32,7 +32,7 @@ class Migration(migrations.Migration):
                 ('position', models.CharField(max_length=1)),
                 ('shoots_catches', models.CharField(max_length=1)),
                 ('external_id', models.IntegerField(unique=True)),
-                ('teams', models.ManyToManyField(related_name='players', to='stats.team')),
+                ('teams', models.ManyToManyField(related_name='players', to='nhlApp.team')),
             ],
         ),
         migrations.CreateModel(
@@ -55,7 +55,7 @@ class Migration(migrations.Migration):
                 ('ev_points', models.IntegerField()),
                 ('time_on_ice_per_game', models.FloatField()),
                 ('faceoff_win_pct', models.FloatField(blank=True, null=True)),
-                ('player', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='stats.player')),
+                ('player', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='nhlApp.player')),
             ],
             options={
                 'unique_together': {('player', 'season_id')},

@@ -5,7 +5,7 @@ class Team(models.Model):
     abbrev = models.CharField(max_length=10)
     conference = models.CharField(max_length=20)
     division = models.CharField(max_length=20)
-    external_id = models.IntegerField(unique=True)
+    external_id = models.IntegerField() # TODO: сделать уникальным
 
     def __str__(self):
         return self.name
@@ -30,7 +30,7 @@ class PlayerSeasonStat(models.Model):
     points = models.IntegerField()
     plus_minus = models.IntegerField()
     shots = models.IntegerField()
-    shooting_pct = models.FloatField()
+    shooting_pct = models.FloatField(null=True, blank=True)
     pp_goals = models.IntegerField()
     pp_points = models.IntegerField()
     sh_goals = models.IntegerField()
