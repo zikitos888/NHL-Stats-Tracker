@@ -1,25 +1,27 @@
 import math
 import requests
-
 from django.core.management.base import BaseCommand
 from nhlApp.models import Team, Player, PlayerSeasonStat
 
 
 BASE_URL = "https://api.nhle.com/stats/rest/en/skater/summary"
-SEASON_ID = "20252026"
-
-
 class Command(BaseCommand):
-    help = "Load NHL skater nhlApp for a season from NHL API"
+    help = "Load NHL skater stats for a season from NHL API. Usage: python manage.py load_nhl_stats 20242025"
+
+    def add_arguments(self, parser):
+        parser.add_argument('season_id', nargs='?', type=str, default='20252026',
+                            help='Season ID (e.g. "20242025" for 2024/25, "20252026" for 2025/26)')
 
     def handle(self, *args, **options):
-        self.stdout.write(self.style.MIGRATE_HEADING(f"Loading nhlApp for season {SEASON_ID}"))
+        SEASON_ID = options['season_id']
+        self.stdout.write(self.style.MIGRATE_HEADING(f"Loading stats for season {SEASON_ID}"))
 
         params = {
             "cayenneExp": f"seasonId={SEASON_ID} and gameTypeId=2",
             "start": 0,
             "limit": 50,
         }
+
         response = requests.get(BASE_URL, params=params, timeout=10)
         response.raise_for_status()
         data = response.json()
@@ -40,10 +42,11 @@ class Command(BaseCommand):
             resp = requests.get(BASE_URL, params=page_params, timeout=10)
             resp.raise_for_status()
             page_data = resp.json()
+
             for item in page_data.get("data", []):
                 self._save_player_and_stats(item)
 
-        self.stdout.write(self.style.SUCCESS("NHL nhlApp loaded successfully"))
+        self.stdout.write(self.style.SUCCESS(f"NHL stats for {SEASON_ID} loaded successfully"))
 
     def _save_player_and_stats(self, item: dict):
         team_abbrevs = item.get("teamAbbrevs") or ""

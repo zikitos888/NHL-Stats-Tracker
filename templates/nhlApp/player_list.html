@@ -4,10 +4,11 @@
     <h1>Игроки NHL</h1>
 
     <form method="get" style="margin-bottom: 20px;">
-        <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: end;">
             {{ filter_form.name }}
             {{ filter_form.position }}
             {{ filter_form.team }}
+            {{ filter_form.season_id }}
             {{ filter_form.min_points }}
             <button type="submit" style="padding: 8px 16px;">Фильтр</button>
             <a href="{% url 'nhlapp:player_list' %}" style="padding: 8px 16px; background: #6c757d; color: white; text-decoration: none; border-radius: 4px;">Сброс</a>
@@ -44,12 +45,19 @@
                             -
                         {% endfor %}
                     </td>
-                    {% with player.latest_stats.0 as stats %}
-                        <td style="padding: 12px;">{{ stats.games_played|default:"-" }}</td>
-                        <td style="padding: 12px;">{{ stats.goals|default:"-" }}</td>
-                        <td style="padding: 12px;">{{ stats.assists|default:"-" }}</td>
-                        <td style="padding: 12px; font-weight: bold; color: #28a745;">{{ stats.points|default:"-" }}</td>
-                    {% endwith %}
+                    {% if player.season_stats %}
+                        {% with player.season_stats.0 as stats %}
+                            <td style="padding: 12px;">{{ stats.games_played|default:0 }}</td>
+                            <td style="padding: 12px;">{{ stats.goals|default:0 }}</td>
+                            <td style="padding: 12px;">{{ stats.assists|default:0 }}</td>
+                            <td style="padding: 12px; font-weight: bold; color: #28a745;">{{ stats.points|default:0 }}</td>
+                        {% endwith %}
+                    {% else %}
+                        <td style="padding: 12px;">0</td>
+                        <td style="padding: 12px;">0</td>
+                        <td style="padding: 12px;">0</td>
+                        <td style="padding: 12px; font-weight: bold; color: #28a745;">0</td>
+                    {% endif %}
                 </tr>
                 {% empty %}
                 <tr>
@@ -65,11 +73,13 @@
     {% if is_paginated %}
         <div style="margin-top: 20px; text-align: center;">
             Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+
             {% if page_obj.has_previous %}
-                <a href="?page={{ page_obj.previous_page_number }}">← Пред</a>
+                <a href="?{{ query_params }}&page={{ page_obj.previous_page_number }}" style="margin: 0 15px; padding: 8px 16px; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">← Пред</a>
             {% endif %}
+
             {% if page_obj.has_next %}
-                <a href="?page={{ page_obj.next_page_number }}">След →</a>
+                <a href="?{{ query_params }}&page={{ page_obj.next_page_number }}" style="margin: 0 15px; padding: 8px 16px; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">След →</a>
             {% endif %}
         </div>
     {% endif %}
