@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="max-width: 1000px; margin: 0 auto;">
+    <h1>{{ player.full_name }}</h1>
+    <p style="font-size: 18px; margin-bottom: 20px;">
+        <strong>Позиция:</strong> {{ player.position }} | 
+        <strong>Команды:</strong> {% for team in current_teams %}{{ team.abbrev }}{% if not forloop.last %}, {% endif %}{% endfor %}
+    </p>
+
+    <h2>Статистика по сезонам</h2>
+    <div style="overflow-x: auto;">
+        <table border="1" style="border-collapse: collapse; width: 100%; font-size: 14px;">
+            <thead>
+                <tr style="background: #f8f9fa;">
+                    <th style="padding: 12px;">Сезон</th>
+                    <th style="padding: 12px;">Игр</th>
+                    <th style="padding: 12px;">Голы</th>
+                    <th style="padding: 12px;">Передачи</th>
+                    <th style="padding: 12px;">Очки</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for stat in stats %}
+                <tr>
+                    <td style="padding: 12px; font-weight: 500;">{{ stat.season_id }}</td>
+                    <td style="padding: 12px;">{{ stat.games_played }}</td>
+                    <td style="padding: 12px;">{{ stat.goals }}</td>
+                    <td style="padding: 12px;">{{ stat.assists }}</td>
+                    <td style="padding: 12px; font-weight: bold; color: #28a745;">{{ stat.points }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" style="padding: 40px; text-align: center; color: #999;">
+                        Статистика отсутствует
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <p style="margin-top: 30px;">
+        <a href="{% url 'nhlapp:player_list' %}" style="padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px;">← Назад к списку</a>
+    </p>
+</div>
+{% endblock %}
