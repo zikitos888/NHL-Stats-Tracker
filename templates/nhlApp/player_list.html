@@ -1,87 +1,91 @@
 {% extends "base.html" %}
 {% block content %}
-<div style="max-width: 1200px; margin: 0 auto;">
-    <h1>Игроки NHL</h1>
+<h1>Игроки NHL</h1>
 
-    <form method="get" style="margin-bottom: 20px;">
-        <div style="display: flex; gap: 10px; flex-wrap: wrap; align-items: end;">
-            {{ filter_form.name }}
-            {{ filter_form.position }}
-            {{ filter_form.team }}
-            {{ filter_form.season_id }}
-            {{ filter_form.min_points }}
-            <button type="submit" style="padding: 8px 16px;">Фильтр</button>
-            <a href="{% url 'nhlapp:player_list' %}" style="padding: 8px 16px; background: #6c757d; color: white; text-decoration: none; border-radius: 4px;">Сброс</a>
-        </div>
-    </form>
-
-    <div style="overflow-x: auto;">
-        <table border="1" style="border-collapse: collapse; width: 100%; font-size: 14px;">
-            <thead>
-                <tr style="background: #f8f9fa;">
-                    <th style="padding: 12px;">Игрок</th>
-                    <th style="padding: 12px;">Позиция</th>
-                    <th style="padding: 12px;">Команда</th>
-                    <th style="padding: 12px;">Игр</th>
-                    <th style="padding: 12px;">Голы</th>
-                    <th style="padding: 12px;">Передачи</th>
-                    <th style="padding: 12px;">Очки</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for player in players %}
-                <tr>
-                    <td style="padding: 12px; font-weight: 500;">
-                        <a href="{% url 'nhlapp:player_detail' player.pk %}" style="text-decoration: none; color: #007bff;">
-                            {{ player.full_name }}
-                        </a>
-                        <br><small style="color: #666;">{{ player.position }}</small>
-                    </td>
-                    <td style="padding: 12px;">{{ player.position }}</td>
-                    <td style="padding: 12px;">
-                        {% for team in player.teams.all|slice:":2" %}
-                            <strong>{{ team.abbrev }}</strong>{% if not forloop.last %}, {% endif %}
-                        {% empty %}
-                            -
-                        {% endfor %}
-                    </td>
-                    {% if player.season_stats %}
-                        {% with player.season_stats.0 as stats %}
-                            <td style="padding: 12px;">{{ stats.games_played|default:0 }}</td>
-                            <td style="padding: 12px;">{{ stats.goals|default:0 }}</td>
-                            <td style="padding: 12px;">{{ stats.assists|default:0 }}</td>
-                            <td style="padding: 12px; font-weight: bold; color: #28a745;">{{ stats.points|default:0 }}</td>
-                        {% endwith %}
-                    {% else %}
-                        <td style="padding: 12px;">0</td>
-                        <td style="padding: 12px;">0</td>
-                        <td style="padding: 12px;">0</td>
-                        <td style="padding: 12px; font-weight: bold; color: #28a745;">0</td>
-                    {% endif %}
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="7" style="padding: 40px; text-align: center; color: #999;">
-                        Игроки не найдены
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+<form method="get" class="filters">
+    <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: end;">
+        {{ filter_form.name }}
+        {{ filter_form.position }}
+        {{ filter_form.team }}
+        {{ filter_form.season_id }}
+        {{ filter_form.min_points }}
+        <button type="submit">Фильтр</button>
+        <a href="{% url 'nhlapp:player_list' %}" class="btn-reset">Сброс</a>
     </div>
+</form>
 
-    {% if is_paginated %}
-        <div style="margin-top: 20px; text-align: center;">
-            Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
+<div class="table-responsive">
+    <table>
+        <thead>
+            <tr>
+                <th>Игрок</th>
+                <th>Позиция</th>
+                <th>Команда</th>
+                <th>Игр</th>
+                <th>Голы</th>
+                <th>Передачи</th>
+                <th>Очки</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for player in players %}
+            <tr>
+                <td>
+                    <a href="{% url 'nhlapp:player_detail' player.pk %}">
+                        {{ player.full_name }}
+                    </a>
+                    <br><small style="color: #666;">{{ player.position }}</small>
+                </td>
+                <td>{{ player.position }}</td>
+                <td>
+                    {% for team in player.teams.all|slice:":2" %}
+                        <strong>{{ team.abbrev }}</strong>{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        -
+                    {% endfor %}
+                </td>
+                {% if player.season_stats %}
+                    {% with player.season_stats.0 as stats %}
+                        <td>{{ stats.games_played|default:0 }}</td>
+                        <td>{{ stats.goals|default:0 }}</td>
+                        <td>{{ stats.assists|default:0 }}</td>
+                        <td class="stats-highlight">{{ stats.points|default:0 }}</td>
+                    {% endwith %}
+                {% else %}
+                    <td>0</td>
+                    <td>0</td>
+                    <td>0</td>
+                    <td class="stats-highlight">0</td>
+                {% endif %}
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="7" style="padding: 40px; text-align: center; color: #999;">
+                    Игроки не найдены
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
 
-            {% if page_obj.has_previous %}
-                <a href="?{{ query_params }}&page={{ page_obj.previous_page_number }}" style="margin: 0 15px; padding: 8px 16px; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">← Пред</a>
-            {% endif %}
+{% if is_paginated %}
+<div class="pagination">
+    Страница {{ page_obj.number }} из {{ page_obj.paginator.num_pages }}
 
-            {% if page_obj.has_next %}
-                <a href="?{{ query_params }}&page={{ page_obj.next_page_number }}" style="margin: 0 15px; padding: 8px 16px; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">След →</a>
-            {% endif %}
-        </div>
+    {% if page_obj.has_previous %}
+        <a href="?{{ query_params }}&page={{ page_obj.previous_page_number }}"
+           class="btn btn-primary" style="margin: 0 10px;">
+            ← Пред
+        </a>
+    {% endif %}
+
+    {% if page_obj.has_next %}
+        <a href="?{{ query_params }}&page={{ page_obj.next_page_number }}"
+           class="btn btn-primary" style="margin: 0 10px;">
+            След →
+        </a>
     {% endif %}
 </div>
+{% endif %}
 {% endblock %}
