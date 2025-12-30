@@ -3,14 +3,47 @@
 <h1>Игроки NHL</h1>
 
 <form method="get" class="filters">
-    <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: end;">
-        {{ filter_form.name }}
-        {{ filter_form.position }}
-        {{ filter_form.team }}
-        {{ filter_form.season_id }}
-        {{ filter_form.min_points }}
-        <button type="submit">Фильтр</button>
-        <a href="{% url 'nhlapp:player_list' %}" class="btn-reset">Сброс</a>
+    <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: flex-start;">
+        <div style="min-width: 200px; text-align: center;">
+            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #374151; font-size: 14px; line-height: 1.4;">
+                Имя фамилия игрока:
+            </label>
+            {{ filter_form.name }}
+        </div>
+
+        <div style="min-width: 120px; text-align: center;">
+            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #374151; font-size: 14px; line-height: 1.4;">
+                Позиция:
+            </label>
+            {{ filter_form.position }}
+        </div>
+
+        <div style="min-width: 140px; text-align: center;">
+            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #374151; font-size: 14px; line-height: 1.4;">
+                Команда:
+            </label>
+            {{ filter_form.team }}
+        </div>
+
+        <div style="min-width: 140px; text-align: center;">
+            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #374151; font-size: 14px; line-height: 1.4;">
+                Сезон:
+            </label>
+            {{ filter_form.season_id }}
+        </div>
+
+        <div style="min-width: 250px; text-align: center;">
+            <label style="display: block; font-weight: 600; margin-bottom: 8px; color: #374151; font-size: 14px; line-height: 1.4;">
+                Минимальное количество очков:
+            </label>
+            {{ filter_form.min_points }}
+        </div>
+
+        <div style="display: flex; gap: 10px; justify-content: center; min-width: 200px; margin-top: 25px; padding-top: 10px;">
+            <button type="submit">Фильтр</button>
+            <a href="{% url 'nhlapp:player_list' %}" class="btn-reset">Сброс</a>
+        </div>
+
     </div>
 </form>
 
@@ -75,14 +108,14 @@
 
     {% if page_obj.has_previous %}
         <a href="?{{ query_params }}&page={{ page_obj.previous_page_number }}"
-           class="btn btn-primary" style="margin: 0 10px;">
+           style="margin: 0 10px; padding: 8px 16px; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">
             ← Пред
         </a>
     {% endif %}
 
     {% if page_obj.has_next %}
         <a href="?{{ query_params }}&page={{ page_obj.next_page_number }}"
-           class="btn btn-primary" style="margin: 0 10px;">
+           style="margin: 0 10px; padding: 8px 16px; background: #007bff; color: white; text-decoration: none; border-radius: 4px;">
             След →
         </a>
     {% endif %}
