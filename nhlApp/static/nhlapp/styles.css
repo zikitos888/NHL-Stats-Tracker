@@ -1,0 +1,11 @@
+.sort-arrows a {
+    text-decoration: none;
+    color: #666;
+    margin-left: 3px;
+    font-weight: normal;
+}
+
+.sort-arrows a.active {
+    color: #007bff;
+    font-weight: bold;
+}

@@ -63,8 +63,11 @@ class PlayerListView(ListView):
             if form.cleaned_data.get('min_points'):
                 qs = qs.filter(season_points__gte=form.cleaned_data['min_points'])
 
-        sort = self.request.GET.get('sort', 'name')
-        order = self.request.GET.get('order', 'asc')
+        sort_param = self.request.GET.get('sort', '')
+        order_param = self.request.GET.get('order', '')
+
+        sort_fields = [s for s in sort_param.split(',') if s]
+        order_fields = [o for o in order_param.split(',') if o]
 
         sort_map = {
             'name': 'full_name',
@@ -76,29 +79,43 @@ class PlayerListView(ListView):
             'points': 'season_points',
         }
 
-        sort_field = sort_map.get(sort, 'full_name')
-        if order == 'desc':
-            sort_field = f'-{sort_field}'
+        order_by_fields = []
 
-        qs = qs.order_by(sort_field, 'full_name')
+        for i, sort_key in enumerate(sort_fields):
+            db_field = sort_map.get(sort_key)
+            if not db_field:
+                continue
+            order = order_fields[i] if i < len(order_fields) else 'asc'
+            prefix = '-' if order == 'desc' else ''
+            order_by_fields.append(f'{prefix}{db_field}')
+
+        if 'full_name' not in [f.lstrip('-') for f in order_by_fields]:
+            order_by_fields.append('full_name')
+
+        if order_by_fields:
+            qs = qs.order_by(*order_by_fields)
 
         return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['filter_form'] = PlayerFilterForm(
-            self.request.GET or {'season_id': '20252026'}
-        )
+        context['filter_form'] = PlayerFilterForm(self.request.GET or {'season_id': '20252026'})
 
-        context['current_sort'] = self.request.GET.get('sort', 'name')
-        context['current_order'] = self.request.GET.get('order', 'asc')
+        sort_param = self.request.GET.get('sort')
+        order_param = self.request.GET.get('order')
+
+        if sort_param and order_param:
+            context['current_sorts'] = sort_param.split(',')
+            context['current_orders'] = order_param.split(',')
+        else:
+            context['current_sorts'] = []
+            context['current_orders'] = []
 
         query_params = self.request.GET.copy()
         query_params.pop('page', None)
         query_params.pop('sort', None)
         query_params.pop('order', None)
-
         context['query_params'] = query_params.urlencode()
 
         return context
