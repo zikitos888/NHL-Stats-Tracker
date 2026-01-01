@@ -50,15 +50,77 @@
 <div class="table-responsive">
     <table>
         <thead>
-            <tr>
-                <th>Игрок</th>
-                <th>Позиция</th>
-                <th>Команда</th>
-                <th>Игр</th>
-                <th>Голы</th>
-                <th>Передачи</th>
-                <th>Очки</th>
-            </tr>
+        <tr>
+            <th>
+                Игрок
+                <span class="sort-arrows">
+                    <a href="?{{ query_params }}&sort=name&order=asc"
+                       class="{% if current_sort == 'name' and current_order == 'asc' %}active{% endif %}">▲</a>
+                    <a href="?{{ query_params }}&sort=name&order=desc"
+                       class="{% if current_sort == 'name' and current_order == 'desc' %}active{% endif %}">▼</a>
+                </span>
+            </th>
+
+            <th>
+                Позиция
+                <span class="sort-arrows">
+                    <a href="?{{ query_params }}&sort=position&order=asc"
+                       class="{% if current_sort == 'position' and current_order == 'asc' %}active{% endif %}">▲</a>
+                    <a href="?{{ query_params }}&sort=position&order=desc"
+                       class="{% if current_sort == 'position' and current_order == 'desc' %}active{% endif %}">▼</a>
+                </span>
+            </th>
+
+            <th>
+                Команда
+                <span class="sort-arrows">
+                    <a href="?{{ query_params }}&sort=team&order=asc"
+                       class="{% if current_sort == 'team' and current_order == 'asc' %}active{% endif %}">▲</a>
+                    <a href="?{{ query_params }}&sort=team&order=desc"
+                       class="{% if current_sort == 'team' and current_order == 'desc' %}active{% endif %}">▼</a>
+                </span>
+            </th>
+
+            <th>
+                Игр
+                <span class="sort-arrows">
+                    <a href="?{{ query_params }}&sort=games&order=asc"
+                       class="{% if current_sort == 'games' and current_order == 'asc' %}active{% endif %}">▲</a>
+                    <a href="?{{ query_params }}&sort=games&order=desc"
+                       class="{% if current_sort == 'games' and current_order == 'desc' %}active{% endif %}">▼</a>
+                </span>
+            </th>
+
+            <th>
+                Голы
+                <span class="sort-arrows">
+                    <a href="?{{ query_params }}&sort=goals&order=asc"
+                       class="{% if current_sort == 'goals' and current_order == 'asc' %}active{% endif %}">▲</a>
+                    <a href="?{{ query_params }}&sort=goals&order=desc"
+                       class="{% if current_sort == 'goals' and current_order == 'desc' %}active{% endif %}">▼</a>
+                </span>
+            </th>
+
+            <th>
+                Передачи
+                <span class="sort-arrows">
+                    <a href="?{{ query_params }}&sort=assists&order=asc"
+                       class="{% if current_sort == 'assists' and current_order == 'asc' %}active{% endif %}">▲</a>
+                    <a href="?{{ query_params }}&sort=assists&order=desc"
+                       class="{% if current_sort == 'assists' and current_order == 'desc' %}active{% endif %}">▼</a>
+                </span>
+            </th>
+
+            <th>
+                Очки
+                <span class="sort-arrows">
+                    <a href="?{{ query_params }}&sort=points&order=asc"
+                       class="{% if current_sort == 'points' and current_order == 'asc' %}active{% endif %}">▲</a>
+                    <a href="?{{ query_params }}&sort=points&order=desc"
+                       class="{% if current_sort == 'points' and current_order == 'desc' %}active{% endif %}">▼</a>
+                </span>
+            </th>
+        </tr>
         </thead>
         <tbody>
             {% for player in players %}
