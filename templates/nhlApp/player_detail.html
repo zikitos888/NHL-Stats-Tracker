@@ -2,8 +2,7 @@
 {% block content %}
 <h1>{{ player.full_name }}</h1>
 <p style="font-size: 18px; margin-bottom: 20px;">
-    <strong>Позиция:</strong> {{ player.position }} |
-    <strong>Команды:</strong> {% for team in current_teams %}{{ team.abbrev }}{% if not forloop.last %}, {% endif %}{% endfor %}
+    <strong>Позиция:</strong> {{ player.position }}
 </p>
 
 <h2>Статистика по сезонам</h2>
@@ -12,6 +11,7 @@
         <thead>
             <tr>
                 <th>Сезон</th>
+                <th>Команда(ы)</th>
                 <th>Игр</th>
                 <th>Голы</th>
                 <th>Передачи</th>
@@ -22,6 +22,13 @@
             {% for stat in stats %}
             <tr>
                 <td>{{ stat.season_id }}</td>
+                <td style="font-size: 14px;">
+                    {% for pst in stat.teams.all|slice:":3" %}
+                        {{ pst.team.full_name }}{% if not forloop.last %}, {% endif %}
+                    {% empty %}
+                        —
+                    {% endfor %}
+                </td>
                 <td>{{ stat.games_played|default:0 }}</td>
                 <td>{{ stat.goals|default:0 }}</td>
                 <td>{{ stat.assists|default:0 }}</td>
@@ -29,7 +36,7 @@
             </tr>
             {% empty %}
             <tr>
-                <td colspan="5" style="padding: 40px; text-align: center; color: #999;">
+                <td colspan="6" style="padding: 40px; text-align: center; color: #999;">
                     Статистика отсутствует
                 </td>
             </tr>

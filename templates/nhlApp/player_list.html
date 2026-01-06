@@ -129,7 +129,7 @@
                 <td>
                     {% with player.season_stats.0 as stats %}
                         {% for pst in stats.teams.all|slice:":2" %}
-                            {{ pst.team.abbrev }}{% if not forloop.last %}, {% endif %}
+                            {{ pst.team.full_name }}{% if not forloop.last %}, {% endif %}
                         {% empty %}—{% endfor %}
                     {% endwith %}
                 </td>

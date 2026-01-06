@@ -7,6 +7,45 @@ class Team(models.Model):
     division = models.CharField(max_length=20)
     external_id = models.IntegerField()
 
+    FULL_NAMES = {
+        'ARI': 'Аризона Койотиз',
+        'EDM': 'Эдмонтон Ойлерз',
+        'COL': 'Колорадо Эвеланш',
+        'SEA': 'Сиэтл Кракен',
+        'MTL': 'Монреаль Канадиенс',
+        'PIT': 'Питтсбург Пингвинз',
+        'BUF': 'Баффало Сэйбрз',
+        'MIN': 'Миннесота Уайлд',
+        'NYR': 'Нью-Йорк Рейнджерс',
+        'BOS': 'Бостон Брюинз',
+        'DAL': 'Даллас Старз',
+        'OTT': 'Оттава Сенаторз',
+        'CHI': 'Чикаго Блэкхокс',
+        'CGY': 'Калгари Флэймз',
+        'VAN': 'Ванкувер Кэнакс',
+        'ANA': 'Анахайм Дакс',
+        'STL': 'Сент-Луис Блюз',
+        'TOR': 'Торонто Мэйпл Лифс',
+        'NJD': 'Нью-Джерси Дэвилз',
+        'DET': 'Детройт Ред Уингз',
+        'SJS': 'Сан-Хосе Шаркс',
+        'PHI': 'Филадельфия Флайерз',
+        'WPG': 'Виннипег Джетс',
+        'LAK': 'Лос-Анджелес Кингз',
+        'TBL': 'Тампа-Бэй Лайтнинг',
+        'VGK': 'Вегас Голден Найтс',
+        'NSH': 'Нэшвилл Предаторз',
+        'CAR': 'Каролина Харрикейнз',
+        'CBJ': 'Коламбус Блю Джекетс',
+        'NYI': 'Нью-Йорк Айлендерс',
+        'FLA': 'Флорида Пантерз',
+        'UTA': 'Юта Хоккей Клаб',
+        'WSH': 'Вашингтон Кэпиталз',
+    }
+
+    def full_name(self):
+        return self.FULL_NAMES.get(self.abbrev, self.name)
+
     def __str__(self):
         return self.name
 
@@ -47,11 +86,9 @@ class PlayerSeasonStat(models.Model):
 
     @property
     def teams(self):
-        """Возвращает команды, в которых игрок играл в этом сезоне"""
         return self.teams.all().select_related('team')  # Оптимизация
 
     def clear_teams(self):
-        """Очищает все связи с командами для этого сезона"""
         PlayerSeasonTeam.objects.filter(player_season_stat=self).delete()
 
 

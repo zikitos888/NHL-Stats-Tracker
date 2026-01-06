@@ -59,7 +59,14 @@ class PlayerListView(ListView):
             if form.cleaned_data.get('position'):
                 qs = qs.filter(position=form.cleaned_data['position'])
             if form.cleaned_data.get('team'):
-                qs = qs.filter(playerseasonstat_set__teams__team__abbrev=form.cleaned_data['team'])
+                team_filter = Exists(
+                    PlayerSeasonStat.objects.filter(
+                        player=OuterRef('pk'),
+                        season_id=season_filter,
+                        teams__team_id=form.cleaned_data['team']
+                    )
+                )
+                qs = qs.filter(team_filter)
             if form.cleaned_data.get('min_points'):
                 qs = qs.filter(season_points__gte=form.cleaned_data['min_points'])
 
