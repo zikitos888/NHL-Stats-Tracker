@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Team, Player, PlayerSeasonStat
+from .models import Team, Player, PlayerSeasonStat, PlayerSeasonTeam
 
 @admin.register(Team)
 class TeamAdmin(admin.ModelAdmin):
@@ -11,8 +11,14 @@ class PlayerAdmin(admin.ModelAdmin):
     list_display = ('full_name', 'last_name', 'position', 'shoots_catches')
     search_fields = ('full_name', 'last_name')
 
+
+class PlayerSeasonTeamInline(admin.TabularInline):
+    model = PlayerSeasonTeam
+    extra = 1
+    autocomplete_fields = ['team']
 @admin.register(PlayerSeasonStat)
 class PlayerSeasonStatAdmin(admin.ModelAdmin):
     list_display = ('player', 'season_id', 'points', 'goals', 'assists', 'games_played')
     list_filter = ('season_id',)
     search_fields = ('player__full_name',)
+    inlines = [PlayerSeasonTeamInline]
