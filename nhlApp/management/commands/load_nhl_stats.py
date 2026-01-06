@@ -1,10 +1,11 @@
 import math
 import requests
 from django.core.management.base import BaseCommand
-from nhlApp.models import Team, Player, PlayerSeasonStat
-
+from nhlApp.models import Team, Player, PlayerSeasonStat, PlayerSeasonTeam
 
 BASE_URL = "https://api.nhle.com/stats/rest/en/skater/summary"
+
+
 class Command(BaseCommand):
     help = "Load NHL skater stats for a season from NHL API. Usage: python manage.py load_nhl_stats 20242025"
 
@@ -50,19 +51,20 @@ class Command(BaseCommand):
 
     def _save_player_and_stats(self, item: dict):
         team_abbrevs = item.get("teamAbbrevs") or ""
-        main_team_abbrev = team_abbrevs.split(",")[0] if team_abbrevs else None
+        team_abbrevs_list = [abbrev.strip() for abbrev in team_abbrevs.split(",") if abbrev.strip()]
 
-        team = None
-        if main_team_abbrev:
+        teams = []
+        for abbrev in team_abbrevs_list:
             team, _ = Team.objects.get_or_create(
-                abbrev=main_team_abbrev,
+                abbrev=abbrev,
                 defaults={
-                    "name": main_team_abbrev,
+                    "name": abbrev,
                     "conference": "",
                     "division": "",
                     "external_id": 0,
                 },
             )
+            teams.append(team)
 
         player_id = item["playerId"]
         full_name = item["skaterFullName"]
@@ -79,12 +81,11 @@ class Command(BaseCommand):
                 "shoots_catches": shoots_catches,
             },
         )
-        if team:
-            player.teams.add(team)
 
-        stats, _ = PlayerSeasonStat.objects.update_or_create(
+        season_id = str(item["seasonId"])
+        stats, created = PlayerSeasonStat.objects.update_or_create(
             player=player,
-            season_id=str(item["seasonId"]),
+            season_id=season_id,
             defaults={
                 "games_played": item["gamesPlayed"],
                 "goals": item["goals"],
@@ -103,3 +104,12 @@ class Command(BaseCommand):
                 "faceoff_win_pct": item.get("faceoffWinPct"),
             },
         )
+
+        if teams:
+            PlayerSeasonTeam.objects.filter(player_season_stat=stats).delete()
+
+            for team in teams:
+                PlayerSeasonTeam.objects.get_or_create(
+                    player_season_stat=stats,
+                    team=team
+                )

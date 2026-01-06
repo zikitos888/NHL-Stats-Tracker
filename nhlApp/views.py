@@ -31,7 +31,7 @@ class PlayerListView(ListView):
         qs = (
             Player.objects
             .filter(has_stats_in_season)
-            .prefetch_related('teams', stat_prefetch)
+            .prefetch_related(stat_prefetch)
             .annotate(
                 season_games=Max(
                     'playerseasonstat__games_played',
@@ -59,7 +59,7 @@ class PlayerListView(ListView):
             if form.cleaned_data.get('position'):
                 qs = qs.filter(position=form.cleaned_data['position'])
             if form.cleaned_data.get('team'):
-                qs = qs.filter(teams=form.cleaned_data['team'])
+                qs = qs.filter(playerseasonstat_set__teams__team__abbrev=form.cleaned_data['team'])
             if form.cleaned_data.get('min_points'):
                 qs = qs.filter(season_points__gte=form.cleaned_data['min_points'])
 
@@ -72,7 +72,7 @@ class PlayerListView(ListView):
         sort_map = {
             'name': 'full_name',
             'position': 'position',
-            'team': 'teams__abbrev',
+            'team': 'playerseasonstat_set__teams__team__abbrev',
             'games': 'season_games',
             'goals': 'season_goals',
             'assists': 'season_assists',
@@ -95,12 +95,14 @@ class PlayerListView(ListView):
         if order_by_fields:
             qs = qs.order_by(*order_by_fields)
 
+        qs = qs.filter(playerseasonstat__teams__isnull=False).distinct()
+
         return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
 
-        context['filter_form'] = PlayerFilterForm(self.request.GET or {'season_id': '20252026'})
+        context['filter_form'] = PlayerFilterForm(self.request.GET)
 
         sort_param = self.request.GET.get('sort')
         order_param = self.request.GET.get('order')
@@ -113,9 +115,6 @@ class PlayerListView(ListView):
             context['current_orders'] = []
 
         query_params = self.request.GET.copy()
-        query_params.pop('page', None)
-        query_params.pop('sort', None)
-        query_params.pop('order', None)
         context['query_params'] = query_params.urlencode()
 
         return context
@@ -127,6 +126,14 @@ class PlayerDetailView(DetailView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['stats'] = self.object.playerseasonstat_set.order_by('-season_id')
-        context['current_teams'] = self.object.teams.all()
+        context['stats'] = (
+            PlayerSeasonStat.objects
+            .filter(player=self.object)
+            .select_related('player')
+            .prefetch_related('teams__team')
+            .order_by('-season_id')
+        )
+        latest_stat = context['stats'].first()
+        context['current_teams'] = latest_stat.teams.all() if latest_stat else []
         return context
+

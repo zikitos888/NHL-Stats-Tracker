@@ -120,36 +120,29 @@
             {% for player in players %}
             <tr>
                 <td>
-                    <a href="{% url 'nhlapp:player_detail' player.pk %}">
+                    <a href="{% url 'nhlapp:player_detail' player.id %}">
                         {{ player.full_name }}
                     </a>
-                    <br><small style="color: #666;">{{ player.position }}</small>
+                    <br><small>{{ player.position }}</small>
                 </td>
                 <td>{{ player.position }}</td>
                 <td>
-                    {% for team in player.teams.all|slice:":2" %}
-                        <strong>{{ team.abbrev }}</strong>{% if not forloop.last %}, {% endif %}
-                    {% empty %}
-                        -
-                    {% endfor %}
-                </td>
-                {% if player.season_stats %}
                     {% with player.season_stats.0 as stats %}
-                        <td>{{ stats.games_played|default:0 }}</td>
-                        <td>{{ stats.goals|default:0 }}</td>
-                        <td>{{ stats.assists|default:0 }}</td>
-                        <td class="stats-highlight">{{ stats.points|default:0 }}</td>
+                        {% for pst in stats.teams.all|slice:":2" %}
+                            {{ pst.team.abbrev }}{% if not forloop.last %}, {% endif %}
+                        {% empty %}—{% endfor %}
                     {% endwith %}
-                {% else %}
-                    <td>0</td>
-                    <td>0</td>
-                    <td>0</td>
-                    <td class="stats-highlight">0</td>
-                {% endif %}
+                </td>
+                {% with player.season_stats.0 as stats %}
+                    <td>{{ stats.games_played|default:0 }}</td>
+                    <td>{{ stats.goals|default:0 }}</td>
+                    <td>{{ stats.assists|default:0 }}</td>
+                    <td>{{ stats.points|default:0 }}</td>
+                {% endwith %}
             </tr>
             {% empty %}
             <tr>
-                <td colspan="7" style="padding: 40px; text-align: center; color: #999;">
+                <td colspan="8" style="padding: 40px; text-align: center; color: #999;">
                     Игроки не найдены
                 </td>
             </tr>
