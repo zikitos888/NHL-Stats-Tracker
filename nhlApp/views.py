@@ -2,7 +2,11 @@ from django.views.generic import ListView, DetailView
 from django.db.models import Prefetch, OuterRef, Exists, Max, Q
 from .models import Player, PlayerSeasonStat
 from .forms import PlayerFilterForm
+from django.shortcuts import render
 
+
+def home(request):
+    return render(request, 'index.html')
 
 class PlayerListView(ListView):
     model = Player
