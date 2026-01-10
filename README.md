@@ -65,12 +65,12 @@
 4. **Выполните миграции:**
    ```bash
    python manage.py migrate
-   python manage.py load_nhl_data 20252026 # Загрузка команд и статистики
-   python manage.py load_nhl_data 20242025
-   python manage.py load_nhl_data 20232024
-   python manage.py load_nhl_data 20222023
-   python manage.py load_nhl_data 20212022
-   python manage.py load_nhl_data 20202021
+   python manage.py load_nhl_stats 20252026 # Загрузка команд и статистики
+   python manage.py load_nhl_stats 20242025
+   python manage.py load_nhl_stats 20232024
+   python manage.py load_nhl_stats 20222023
+   python manage.py load_nhl_stats 20212022
+   python manage.py load_nhl_stats 20202021
    ```
 5. **Создайте суперпользователя**
    ```bash
