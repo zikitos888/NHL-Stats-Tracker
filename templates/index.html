@@ -50,12 +50,12 @@
 <body>
     <h1>Добро пожаловать на сайт статистики чемпионата NHL</h1>
     <div class="button-container">
-        <a href="http://127.0.0.1:8000/nhl/">Статистика NHL 2025-2026</a>
-        <a href="http://127.0.0.1:8000/nhl/?name=&position=&team=&season_id=20242025&min_points=">Статистика NHL 2024-2025</a>
-        <a href="http://127.0.0.1:8000/nhl/?name=&position=&team=&season_id=20232024&min_points=">Статистика NHL 2023-2024</a>
-        <a href="http://127.0.0.1:8000/nhl/?name=&position=&team=&season_id=20222023&min_points=">Статистика NHL 2022-2023</a>
-        <a href="http://127.0.0.1:8000/nhl/?name=&position=&team=&season_id=20212022&min_points=">Статистика NHL 2021-2022</a>
-        <a href="http://127.0.0.1:8000/nhl/?name=&position=&team=&season_id=20202021&min_points=">Статистика NHL 2020-2021</a>
+        <a href="{% url 'nhlapp:player_list' %}">Статистика NHL 2025-2026</a>
+        <a href="{% url 'nhlapp:player_list' %}?season_id=20242025">Статистика NHL 2024-2025</a>
+        <a href="{% url 'nhlapp:player_list' %}?season_id=20232024">Статистика NHL 2023-2024</a>
+        <a href="{% url 'nhlapp:player_list' %}?season_id=20222023">Статистика NHL 2022-2023</a>
+        <a href="{% url 'nhlapp:player_list' %}?season_id=20212022">Статистика NHL 2021-2022</a>
+        <a href="{% url 'nhlapp:player_list' %}?season_id=20202021">Статистика NHL 2020-2021</a>
     </div>
 </body>
 </html>

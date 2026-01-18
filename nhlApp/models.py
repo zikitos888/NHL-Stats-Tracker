@@ -86,7 +86,7 @@ class PlayerSeasonStat(models.Model):
 
     @property
     def teams(self):
-        return self.teams.all().select_related('team')  # Оптимизация
+        return self.teams.all().select_related('team')
 
     def clear_teams(self):
         PlayerSeasonTeam.objects.filter(player_season_stat=self).delete()
